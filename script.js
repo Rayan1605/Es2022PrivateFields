@@ -50,4 +50,6 @@ class Wallet {
 }
 
 const wallet = new Wallet();
+wallet.deposit(500);
+wallet.withdraw(100);
 console.log(wallet.#balance);
