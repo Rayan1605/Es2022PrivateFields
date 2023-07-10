@@ -1,5 +1,6 @@
 class Wallet {
-
+//This is a private property and it is not accessible outside the class and it stay hidden
+  // This is a new addition within javascript and # is used to make a property private
   #balance = 0;
     #transactions = [];
   constructor() {
