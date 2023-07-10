@@ -1,75 +1,53 @@
-const apiUrl = "https://jsonplaceholder.typicode.com/todos";
+class Wallet {
+  constructor() {
+    this._balance = 0;
+    this._transactions = [];
+  }
 
-function GetFunction(){
-    fetch(apiUrl + '?_limit=5').then((res) => res.json())
-        .then((data) => {
+  deposit(amount) {
+    this._processDeposit(amount);
+    this._balance += amount;
+  }
 
-           data.forEach((todo) => {
-             AddToDom(todo);
-           })
-        })
-}
-function AddToDom(todo){
-    const div = document.createElement('div');
-    div.appendChild(document.createTextNode(todo.title));
-    div.classList.add('todo'); //So this put every todo a class call that so we can target it
-    div.setAttribute("data-id",todo.id) // to make an id
-    if (todo.completed){
-        div.classList.add.done;
+  withdraw(amount) {
+    if (amount > this._balance) {
+      console.log('Not enough funds');
+      return;
     }
-    document.getElementById("todo-list").appendChild(div);
+
+    this._processWithdraw(amount);
+    this._balance -= amount;
+  }
+
+  _processDeposit(amount) {
+    console.log(`Depositing ${amount}`);
+
+    this._transactions.push({
+      type: 'deposit',
+      amount,
+    });
+  }
+
+  _processWithdraw(amount) {
+    console.log(`Withdrawing ${amount}`);
+
+    this._transactions.push({
+      type: 'withdraw',
+      amount,
+    });
+  }
+
+  get balance() {
+    return this._balance;
+  }
+
+  get transactions() {
+    return this._transactions;
+  }
 }
 
-function CreateTodo(e) {
-e.preventDefault();
-
-    const newtdo = {
-        title: e.target.firstElementChild.value,
-        completed: false
-    }
-    fetch(apiUrl,{
-      method: "Post",
-      body: JSON.stringify(newtdo),
-      headers: {
-          "Content-Type": "Application/json"
-      }
-    }).then((res) => res.json()).then((data) => AddToDom(data));
-
-}
-
-function ToggleCompleted(e) {
-    if (e.target.classList.contains('todo')){
-        e.target.classList.toggle("done");
-    }
-    UpdateToDo(e.target.dataset.id, e.target.classList.contains("done"));
-}
-const UpdateToDo = (id, completed) => {
-    fetch(`${apiUrl}/${id}`, {
-        method: "PUT",
-        body:Json.stringify({completed}),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    }).then((res) => res.json()).then((data) => console.log(data))
-}
-
-function deleteToDo(e){
-       if (e.target.classList.contains("todo")){
-           const id = e.target.dataset.id;
-           fetch(`${apiUrl}/${id}` , {
-               method: "DELETE"
-           }).then((res) => res.json()).then(() => e.target.remove())
-       }
-
-}
-
-const init = () =>{ //this is a function but Arrow format
-
-    document.addEventListener("DOMContentLoaded",GetFunction)
-    document.querySelector("#todo-form").addEventListener("submit",CreateTodo)
-    document.querySelector("#todo-list").addEventListener("click",ToggleCompleted)
-    document.querySelector("#todo-list").addEventListener("dblclick",deleteToDo);
-}
-init();
-
-
+const wallet = new Wallet();
+wallet.deposit(300);
+wallet.withdraw(50);
+console.log(wallet.balance);
+console.log(wallet.transactions);
